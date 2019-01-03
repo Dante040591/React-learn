@@ -3,6 +3,7 @@ import AppHeader from '../app-header';
 import SearchPanel from '../search-panel';
 import TodoList from '../todo-list';
 import ItemStatusFilter from '../item-status-filter';
+import AddItem from '../add-item';
 
 import './app.css';
 
@@ -21,11 +22,32 @@ export default class App extends Component {
       const newTodoData = newState.todoData;
       const idx = newTodoData.findIndex((el) => el.id === id);
       newTodoData.splice(idx, 1);
-      
+
       return {
         todoData: newTodoData
       }
     });
+  }
+
+  addItemHandler = (text) => {
+
+    const id = Math.round(Math.random() * 100 );
+    const newEl = {
+      label: text,
+      important: false,
+      id: id
+    }
+    
+    this.setState((state) => {
+      const newState = this.state;
+      const newTodoData = newState.todoData;
+      newTodoData.push(newEl);
+
+      return {
+        todoData: newTodoData
+      }
+
+    }); 
   }
 
   render () {
@@ -40,6 +62,8 @@ export default class App extends Component {
           <TodoList 
             todos={ this.state.todoData } 
             onDeleted={ this.deleteItem }/>
+          
+          <AddItem addItemHandler={this.addItemHandler}/>
         </div>
       );
   }
