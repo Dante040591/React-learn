@@ -8,20 +8,57 @@ import AddItem from '../add-item';
 import './app.css';
 
 export default class App extends Component {
+
+  maxId = 1;
+
   state = {
     todoData: [
-      { label: 'Drink Coffee', important: false, id: 1 },
-      { label: 'Make Awesome App', important: true, id: 2 },
-      { label: 'Have a lunch', important: false, id: 3 }
+      this.createTodoItem('Wake up'),
+      this.createTodoItem('Drink coffee'),
+      this.createTodoItem('Learn React')
     ]
   }
 
+  createTodoItem(text) {
+    return {
+      label: text,
+      important: false,
+      done: false, 
+      id: this.maxId++
+    }
+  }
+
+
   deleteItem = (id) => {
-    this.setState((state) => {
-      const newState = this.state;
-      const newTodoData = newState.todoData;
+    this.setState((prevState) => {
+      //const newTodoData = prevState.todoData;
+      const idx = prevState.todoData.findIndex((el) => el.id === id);
+      prevState.todoData.splice(idx, 1);
+      return {
+        todoData: prevState.todoData
+      }
+    });
+  }
+
+  addItemHandler = (text) => {
+    this.setState((prevState) => {
+      const newTodoData = prevState.todoData;
+      const newEl = this.createTodoItem(text);
+      newTodoData.push(newEl);
+
+      return {
+        todoData: newTodoData
+      }
+    }); 
+  }
+
+  onToggleDone = (id) => {
+    this.setState((prevState) => {
+      const newTodoData = prevState.todoData;
       const idx = newTodoData.findIndex((el) => el.id === id);
-      newTodoData.splice(idx, 1);
+      const oldItem = newTodoData[idx];
+      const newItem = {...oldItem, done: !oldItem.done};
+      newTodoData.splice(idx, 1, newItem);
 
       return {
         todoData: newTodoData
@@ -29,25 +66,8 @@ export default class App extends Component {
     });
   }
 
-  addItemHandler = (text) => {
-
-    const id = Math.round(Math.random() * 100 );
-    const newEl = {
-      label: text,
-      important: false,
-      id: id
-    }
-    
-    this.setState((state) => {
-      const newState = this.state;
-      const newTodoData = newState.todoData;
-      newTodoData.push(newEl);
-
-      return {
-        todoData: newTodoData
-      }
-
-    }); 
+  onToggleImportant = (id) => {
+    console.log('toggle important', id)
   }
 
   render () {
@@ -61,7 +81,9 @@ export default class App extends Component {
 
           <TodoList 
             todos={ this.state.todoData } 
-            onDeleted={ this.deleteItem }/>
+            onDeleted={ this.deleteItem }
+            onToggleDone={ this.onToggleDone }
+            onToggleImportant={ this.onToggleImportant }/>
           
           <AddItem addItemHandler={this.addItemHandler}/>
         </div>
