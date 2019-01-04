@@ -53,27 +53,41 @@ export default class App extends Component {
   }
 
   onToggleDone = (id) => {
-    this.setState((prevState) => {
-      const newTodoData = prevState.todoData;
-      const idx = newTodoData.findIndex((el) => el.id === id);
-      const oldItem = newTodoData[idx];
-      const newItem = {...oldItem, done: !oldItem.done};
-      newTodoData.splice(idx, 1, newItem);
-
+    this.setState(({todoData}) => {
       return {
-        todoData: newTodoData
+        todoData: this.toggleProps(todoData, id, 'done')
       }
-    });
+    })
+  }
+
+  //определяет свойство, которое нужно добавить/удалить (prop)
+  toggleProps(arr, id, prop) {
+      const newTodoData = arr
+      const idx = newTodoData.findIndex((el) => el.id === id)
+      const oldItem = newTodoData[idx];
+      const newItem = {...oldItem, [prop]: !oldItem[prop]}
+      newTodoData.splice(idx, 1, newItem)
+      return newTodoData
   }
 
   onToggleImportant = (id) => {
-    console.log('toggle important', id)
+    this.setState(({todoData}) => {
+      return {
+         todoData: this.toggleProps(todoData, id, 'important')
+      }
+    })
   }
 
   render () {
+    //отобрать те элементы у которых el.done == true и получить их количество (length)
+    //filter не изменяет state , так как возвращает новый массив
+    const doneCount = this.state.todoData.filter((el) => el.done).length
+    const todoCount = this.state.todoData.length - doneCount
+    
+
     return (
         <div className="todo-app">
-          <AppHeader toDo={1} done={3} />
+          <AppHeader toDo={todoCount} done={doneCount} />
           <div className="top-panel d-flex">
             <SearchPanel />
             <ItemStatusFilter />
