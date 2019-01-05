@@ -2,16 +2,37 @@ import React, { Component } from 'react';
 import './add-item.css';
 
 export default class AddItem extends Component {
+
+    state = {
+        label: ''
+    }
+
+    onChangeLabel = (event) => {
+        this.setState({
+            label: event.target.value
+        })
+    }
+    onSubmit = (event) => {
+        event.preventDefault()
+        this.props.addItemHandler(this.state.label)
+    }
+
     render(props) {
         return (
-            <div className='add-item'>
+            <form className='form-group d-flex add-item'
+                    onSubmit={this.onSubmit}>
+                <input
+                    type='text' 
+                    placeholder='new task'
+                    className='form-control search-input'
+                    onChange={this.onChangeLabel}/>
                 <button 
                     type='button' 
                     className='btn btn-success'
-                    onClick={() => this.props.addItemHandler('Run')}>
+                    onClick={this.onSubmit}>
                     Add item
                 </button>
-            </div>
+            </form>
         )
     }
 } 
