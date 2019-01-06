@@ -15,6 +15,9 @@ export default class AddItem extends Component {
     onSubmit = (event) => {
         event.preventDefault()
         this.props.addItemHandler(this.state.label)
+        this.setState({
+            label: ''
+        })
     }
 
     render(props) {
@@ -25,7 +28,8 @@ export default class AddItem extends Component {
                     type='text' 
                     placeholder='new task'
                     className='form-control search-input'
-                    onChange={this.onChangeLabel}/>
+                    onChange={this.onChangeLabel}
+                    value={this.state.label}/>
                 <button 
                     type='button' 
                     className='btn btn-success'

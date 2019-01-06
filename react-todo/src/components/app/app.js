@@ -16,7 +16,8 @@ export default class App extends Component {
       this.createTodoItem('Wake up'),
       this.createTodoItem('Drink coffee'),
       this.createTodoItem('Learn React')
-    ]
+    ], 
+    term: ''
   }
 
   createTodoItem(text) {
@@ -78,23 +79,38 @@ export default class App extends Component {
     })
   }
 
+  search(items, term) {
+    if (term.length === 0) {
+      return items
+    }
+    return items.filter((item)=> {
+      return item.label.toLowerCase().indexOf(term.toLowerCase()) > -1
+    })
+  }
+
+  onSearchChange = (term) => {
+    this.setState({term})
+  }
+
   render () {
     //отобрать те элементы у которых el.done == true и получить их количество (length)
     //filter не изменяет state , так как возвращает новый массив
     const doneCount = this.state.todoData.filter((el) => el.done).length
     const todoCount = this.state.todoData.length - doneCount
+    const visibleItem = this.search(this.state.todoData, this.state.term) 
     
 
     return (
         <div className="todo-app">
           <AppHeader toDo={todoCount} done={doneCount} />
           <div className="top-panel d-flex">
-            <SearchPanel />
+            <SearchPanel 
+              onSearchChange = {this.onSearchChange}/>
             <ItemStatusFilter />
           </div>
 
           <TodoList 
-            todos={ this.state.todoData } 
+            todos={ visibleItem } 
             onDeleted={ this.deleteItem }
             onToggleDone={ this.onToggleDone }
             onToggleImportant={ this.onToggleImportant }/>
