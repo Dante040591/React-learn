@@ -17,7 +17,8 @@ export default class App extends Component {
       this.createTodoItem('Drink coffee'),
       this.createTodoItem('Learn React')
     ], 
-    term: ''
+    term: '',
+    filter: 'active'
   }
 
   createTodoItem(text) {
@@ -92,12 +93,29 @@ export default class App extends Component {
     this.setState({term})
   }
 
+  onChangeFilter = (filter) => {
+    this.setState({filter})
+  }
+
+  filter(items, filter) {
+    switch (filter){
+      case 'all': 
+        return items
+      case 'active':
+        return items.filter((item) => !item.done)
+      case 'done':
+        return items.filter((item) => item.done)
+      default:
+        return items
+    }
+  }
+
   render () {
     //отобрать те элементы у которых el.done == true и получить их количество (length)
     //filter не изменяет state , так как возвращает новый массив
     const doneCount = this.state.todoData.filter((el) => el.done).length
     const todoCount = this.state.todoData.length - doneCount
-    const visibleItem = this.search(this.state.todoData, this.state.term) 
+    const visibleItem = this.filter( this.search(this.state.todoData, this.state.term), this.state.filter) 
     
 
     return (
@@ -106,7 +124,7 @@ export default class App extends Component {
           <div className="top-panel d-flex">
             <SearchPanel 
               onSearchChange = {this.onSearchChange}/>
-            <ItemStatusFilter />
+            <ItemStatusFilter filter={this.state.filter} onChangeFilter = {this.onChangeFilter} />
           </div>
 
           <TodoList 
@@ -115,7 +133,8 @@ export default class App extends Component {
             onToggleDone={ this.onToggleDone }
             onToggleImportant={ this.onToggleImportant }/>
           
-          <AddItem addItemHandler={this.addItemHandler}/>
+          <AddItem 
+            addItemHandler={this.addItemHandler}/>
         </div>
       );
   }
